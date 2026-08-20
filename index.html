@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16231c">
+<meta name="description" content="생윤 사상가를 핵심축에서 지문까지 연결해 반복 학습하는 모바일 SRS">
+<link rel="manifest" href="./manifest.json"><link rel="icon" href="./icon.svg">
+<title>생윤 연결 훈련소</title>
+<style>
+:root{--bg:#122019;--panel:#f4ecd9;--ink:#20251f;--muted:#879587;--gold:#d2a54b;--red:#a63b32;--green:#3f754c;--soft:#e5eadf;--line:#c7bea6;}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg)} body{color:#f4ecd9;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;padding:18px 14px 48px;overscroll-behavior-y:none}
+button,textarea{font:inherit} button{-webkit-tap-highlight-color:transparent}
+.app{max-width:620px;margin:auto} .top{text-align:center;margin-bottom:14px} .eyebrow{font:11px ui-monospace,monospace;letter-spacing:2px;color:var(--gold)} h1{font-size:23px;margin:6px 0 3px} .sub{font-size:12px;color:#aab4a8}
+.mission{background:linear-gradient(135deg,#22352a,#192a21);border:1px solid #425546;border-radius:14px;padding:14px;margin:0 auto 12px;box-shadow:0 10px 30px #0004}
+.mission-row{display:flex;align-items:center;justify-content:space-between;gap:12px} .mission-title{font-weight:800;font-size:15px} .mission-copy{font-size:12px;color:#b9c3b8;margin-top:4px;line-height:1.45} .progress{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) var(--pct),#344538 0);flex:0 0 auto} .progress::after{content:"";width:72px;height:72px;border-radius:50%;background:#1b2a21;position:absolute} .progress span{position:relative;z-index:1;font-weight:800;font-size:14px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px} .tab{border:1px solid #435246;background:#18291f;color:#c9d0c5;border-radius:9px;padding:9px 3px;font-size:11px;cursor:pointer} .tab.active{background:var(--gold);color:#20251f;border-color:var(--gold);font-weight:800}
+.panel{display:none} .panel.active{display:block}
+.card{background:var(--panel);color:var(--ink);border-radius:14px;padding:18px;box-shadow:0 14px 34px #0005;margin-bottom:10px} .tag{font-size:10px;color:#697365;letter-spacing:1px;text-transform:uppercase} .name{font-size:22px;font-weight:850;margin:4px 0 12px} .axis{font-size:17px;font-weight:800;line-height:1.45} .why{margin-top:12px;padding:11px 12px;background:#e9e3d2;border-left:3px solid var(--gold);font-size:13px;line-height:1.6}
+.label{font-size:10px;letter-spacing:1px;color:var(--red);font-weight:800;margin:15px 0 6px} .chips{display:flex;flex-wrap:wrap;gap:6px} .chip{background:#fffaf0;border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:12px;line-height:1.25}
+.recall{border:1px dashed #9f957c;background:#fbf5e8;border-radius:10px;padding:16px;text-align:center;margin-top:12px;cursor:pointer;color:#666} .recall b{display:block;color:#333;margin-bottom:4px} .hidden{filter:blur(5px);user-select:none}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px} .btn{border:1px solid #506054;background:#1b2d22;color:#f4ecd9;border-radius:10px;padding:12px;cursor:pointer;font-weight:750} .btn.primary{background:var(--gold);border-color:var(--gold);color:#20251f} .btn.light{background:#fffaf0;color:var(--ink);border-color:var(--line)}
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px} .grade button{padding:11px 5px;border-radius:9px;border:1px solid var(--line);background:#fffaf0;color:var(--ink);cursor:pointer;font-size:12px;font-weight:750} .grade button:nth-child(1){border-color:#9db4a0} .grade button:nth-child(3){border-color:#c48d87}
+.choice-list{display:grid;gap:8px} .choice{text-align:left;background:#fffaf0;border:1px solid var(--line);color:var(--ink);padding:12px;border-radius:10px;cursor:pointer;line-height:1.45} .choice.correct{background:#dcecdf;border-color:#4b7b56} .choice.wrong{background:#f4d9d6;border-color:#a64a42} .choice:disabled{cursor:default}
+.result{margin-top:12px;padding:12px;border-radius:10px;background:#e8eadf;font-size:13px;line-height:1.6} .result strong{color:var(--red)} .small{font-size:11px;color:#697365} .center{text-align:center}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px} .match-item{padding:11px;border:1px solid var(--line);background:#fffaf0;border-radius:10px;cursor:pointer;color:var(--ink);text-align:left} .match-item.sel{outline:2px solid var(--gold);background:#fff2c9} .match-item.good{background:#dcecdf;border-color:#4b7b56} .match-item.bad{background:#f4d9d6;border-color:#a64a42}
+textarea{width:100%;min-height:105px;border:1px solid var(--line);border-radius:10px;background:#fffaf0;color:var(--ink);padding:11px;resize:vertical}
+.stats{display:flex;gap:7px;overflow:auto;margin-bottom:10px} .stat{white-space:nowrap;background:#1b2d22;border:1px solid #3f5144;border-radius:999px;padding:6px 9px;font-size:11px;color:#c4cdc1} .stat b{color:var(--gold)}
+.footer{text-align:center;color:#748174;font-size:10px;margin-top:18px}
+@media(max-width:430px){body{padding:14px 10px 38px} .card{padding:15px} .axis{font-size:16px} .progress{width:78px;height:78px} .progress::after{width:61px;height:61px}}
+</style></head>
+<body><main class="app">
+<header class="top"><div class="eyebrow">생활과 윤리 · SRS</div><h1>생윤 연결 훈련소</h1><div class="sub">핵심축 → 연결 → 회상 → 지문 → 문제</div></header>
+<section class="mission"><div class="mission-row"><div><div class="mission-title">오늘의 10분 훈련</div><div class="mission-copy" id="mission-copy">기억을 다시 꺼내는 것이 공부야.</div></div><div class="progress" id="progress"><span>0%</span></div></div></section>
+<div class="stats" id="stats"></div>
+<nav class="tabs"><button class="tab active" data-tab="today">오늘</button><button class="tab" data-tab="connect">연결</button><button class="tab" data-tab="exam">실전</button><button class="tab" data-tab="cards">전체</button></nav>
+<section id="today" class="panel active"></section><section id="connect" class="panel"></section><section id="exam" class="panel"></section><section id="cards" class="panel"></section>
+<div class="footer">학습 기록은 이 기기의 브라우저에 저장됩니다 · 오프라인 사용 가능</div>
+</main>
+<script>
+const DATA = [
+{id:1,cat:"의무론·공리주의·덕윤리",name:"칸트",axis:"이성적 자율성에 따라 스스로 보편적 도덕법칙을 세우고 의무로 따른다.",why:"칸트에게 도덕은 욕망이나 결과가 아니라 이성에 의해 누구에게나 타당한 법칙을 스스로 따르는 데서 성립한다.",concepts:["선의지","의무","정언명령","준칙/격률","보편적 입법","자율","인간을 목적으로 대우","존엄","수단화 금지"],phrases:["조건 없이 ~해야 한다","네 의지의 준칙이 보편적 법칙이 될 수 있도록","모든 이성적 존재에게 타당한 원칙","도덕법칙에 대한 존경","행위의 결과와 무관하게","인간성을 단순한 수단으로 취급하지 말 것","스스로 입법하고 스스로 복종"],distinction:"공리주의는 결과의 유용성, 칸트는 의무와 보편적 원칙."},
+{id:2,cat:"의무론·공리주의·덕윤리",name:"벤담",axis:"행위의 결과에서 발생하는 쾌락과 고통을 계산해 총행복을 최대화한다.",why:"공리의 기준을 개인의 직관이나 의무가 아니라 결과에서 얻는 쾌락·고통으로 잡는다.",concepts:["공리","최대 다수의 최대 행복","양적 쾌락","쾌락 계산","효용","형벌의 예방"],phrases:["쾌락과 고통을 기준으로","행복의 총량","더 큰 행복을 산출","쾌락의 강도·지속성·확실성·근접성 등 계산","형벌은 그 자체로 해악"],distinction:"밀과 달리 쾌락의 질적 우열보다 양적 계산을 중시."},
+{id:3,cat:"의무론·공리주의·덕윤리",name:"밀",axis:"행복의 최대화와 함께 인간의 고급 능력·개인의 자유를 보호한다.",why:"단순한 양적 쾌락만으로 인간다운 행복을 설명할 수 없고, 타인에게 해악을 주지 않는 한 개인의 자유와 개성이 중요하다.",concepts:["질적 공리주의","고급 쾌락","저급 쾌락","해악 원칙","개성","자기결정"],phrases:["질적으로 더 높은 쾌락","두 종류의 쾌락을 모두 경험한 사람의 판단","만족한 돼지보다 불만족한 인간","타인에게 해악을 끼치는 것을 막기 위한 경우","개인의 선택과 개성"],distinction:"벤담=양적 계산 / 밀=질적 차이 + 자유."},
+{id:4,cat:"의무론·공리주의·덕윤리",name:"아리스토텔레스",axis:"덕 있는 활동을 지속하여 인간다운 행복을 실현한다.",why:"행복을 순간적 감정이 아니라 인간의 고유한 기능을 덕에 따라 잘 수행하는 삶의 활동으로 본다.",concepts:["행복","최고선","덕","품성적 덕","지적 덕","중용","실천적 지혜"],phrases:["인간의 고유한 기능","덕에 따른 영혼의 활동","덕은 습관을 통해 형성","과도함과 부족함 사이","상황에 맞는 중간","실천적 지혜에 따른 판단"],distinction:"중용은 수학적 평균이 아니라 상황에 적절한 덕의 상태."},
+{id:5,cat:"의무론·공리주의·덕윤리",name:"플라톤",axis:"이성에 의한 선·정의의 인식과 영혼·국가의 조화.",why:"참된 선과 정의를 감각적 욕망이 아니라 이성이 인식해야 하며, 각 부분이 제 역할을 할 때 정의가 성립한다.",concepts:["이데아","선의 이데아","영혼의 세 부분","정의","철인정치"],phrases:["감각적 세계를 넘어선 참된 실재","선의 이데아","이성이 통치","각자 자기 일을 함","철학자가 통치","영혼의 조화"],distinction:"아리스토텔레스는 현실적 덕의 습관과 중용이 중심."},
+{id:6,cat:"의무론·공리주의·덕윤리",name:"토마스 아퀴나스",axis:"이성과 신앙이 조화를 이루며 자연법을 통해 인간의 선한 목적을 실현한다.",why:"인간의 이성이 신의 영원한 법에 참여하는 방식으로 자연법을 인식할 수 있다.",concepts:["영원법","자연법","인간법","신법","최고선","이성","신앙"],phrases:["영원법에 인간의 이성이 참여","선은 추구하고 악은 피해야 함","자연적 성향","자연법에 부합하는 인간법","신법에 의한 보완"],distinction:"자연법의 근원을 신적 질서와 연결."},
+{id:7,cat:"형벌·범죄",name:"베카리아",axis:"형벌은 사회의 범죄를 예방하기 위한 공익적 수단이어야 하며, 필요 이상으로 가혹해서는 안 된다.",why:"형벌의 정당성은 응보 자체보다 사회적 해악을 줄이는 데 있고, 잔혹한 형벌은 예방 효과가 낮거나 불필요한 고통을 낳는다.",concepts:["공리주의적 형벌론","범죄 예방","비례성","신속성","확실성","사형 비판"],phrases:["형벌의 목적은 범죄 예방","필요한 만큼만","범죄와 형벌의 비례","신속하고 확실한 처벌","잔혹성의 최소화","사형의 사회적 필요성 비판"],distinction:"칸트의 응보주의와 대비. 예방·사회적 효용을 보면 베카리아 쪽."},
+{id:8,cat:"형벌·범죄",name:"칸트",axis:"범죄에 대한 응당한 응보.",why:"형벌을 범죄자의 인격을 개선하거나 사회적 이익을 얻기 위한 단순한 수단으로만 보면 인간을 수단화하게 된다.",concepts:["응보","등가성","범죄에 상응","형벌의 정당성","사형"],phrases:["범죄에 상응하는 형벌","응보 그 자체","형벌을 다른 목적의 수단으로만 삼지 않음","사형은 살인에 대한 응보"],distinction:"베카리아=예방·공익 / 칸트=응보."},
+{id:9,cat:"분배 정의·자유",name:"롤스",axis:"공정한 조건에서 모두가 받아들일 수 있는 정의의 원칙.",why:"자신의 계층·재능·가정환경 등을 모르는 상태에서 원칙을 선택하면 특정 집단에 유리한 원칙을 고르기 어렵고, 기본적 자유와 공정한 기회를 보장하면서 최소수혜자를 보호하는 원칙을 선택하게 된다.",concepts:["공정으로서의 정의","원초적 입장","무지의 베일","기본적 자유","공정한 기회균등","차등의 원칙","최소수혜자"],phrases:["자신의 사회적 위치를 모름","자신의 능력·재능을 모름","우연적 요소를 배제","모두에게 평등한 기본적 자유","기회가 공정하게 개방","가장 불리한 사람의 이익을 최대화","불평등이 허용되려면 최소수혜자에게 이익"],distinction:"노직과 달리 결과와 제도의 공정한 원칙을 중시. 단순한 '똑같이 나눔'이 아님."},
+{id:10,cat:"분배 정의·자유",name:"노직",axis:"개인의 자기소유권과 정당한 소유 과정.",why:"분배 결과가 어떤 모양인지보다 재산이 정당하게 취득되고 자발적으로 이전되었는지가 중요하다.",concepts:["자기소유권","소유권리론","정당한 취득","정당한 이전","교정","최소국가"],phrases:["개인은 자기 자신에 대한 권리를 가짐","정당한 최초 취득","자발적 이전","과거의 부정의에 대한 교정","분배의 역사적 과정","강제적 재분배 비판"],distinction:"롤스=공정한 원칙 / 노직=역사적 취득·이전의 정당성."},
+{id:11,cat:"동물·환경",name:"싱어",axis:"이익의 동등한 고려.",why:"어떤 존재가 고통·쾌락을 경험하고 이익을 가질 수 있다면 종이 다르다는 이유만으로 그 이익을 무시해서는 안 된다.",concepts:["선호 공리주의","이익","고통·쾌락","동등한 고려","종차별주의"],phrases:["고통을 느낄 수 있는가","이익을 동등하게 고려","종이 다르다는 이유만으로 차별","종차별주의","선호의 충족·좌절"],distinction:"싱어는 '권리'보다 이익의 동등한 고려와 고통·선호의 고려가 중심."},
+{id:12,cat:"동물·환경",name:"레건",axis:"삶의 주체인 존재의 권리와 고유한 가치.",why:"동물도 삶을 경험하는 주체라면 인간에게 얼마나 유용한지와 무관하게 고유한 가치를 가지므로 단순한 자원으로 이용해서는 안 된다.",concepts:["삶의 주체","내재적 가치","권리","존중","동물권"],phrases:["자신의 삶에 대한 경험","믿음·욕구·기억·감정","삶의 주체","고유한 가치","권리를 침해하지 말 것"],distinction:"싱어=이익 고려 / 레건=권리·삶의 주체."},
+{id:13,cat:"동물·환경",name:"테일러",axis:"모든 생명체의 고유한 가치.",why:"각 생명체가 자기 방식으로 생존과 번영을 추구하는 목적론적 삶의 중심이므로 인간에게 유용한지와 무관하게 존중받아야 한다.",concepts:["생명중심주의","고유한 가치","목적론적 삶의 중심"],phrases:["모든 생명체","자기 보존과 번영","목적론적 삶의 중심","인간에게 유용한지와 무관","생명체의 선"],distinction:"레건은 주로 동물의 삶의 주체·권리, 테일러는 모든 생명체의 고유한 가치."},
+{id:14,cat:"동물·환경",name:"레오폴드",axis:"생명 공동체 전체의 온전성·안정성·아름다움.",why:"도덕 공동체의 범위를 개별 인간·동물에서 토양·물·식물·동물의 생태 공동체 전체로 확장한다.",concepts:["대지 윤리","생명 공동체","생태계","온전성","안정성","아름다움"],phrases:["대지 공동체","토양·물·식물·동물","생태계의 건강성","온전성·안정성·아름다움","공동체의 구성원으로서 인간"],distinction:"개별 생명체의 권리보다 생태 공동체 전체의 건강성과 균형을 중심으로 판단."},
+{id:15,cat:"동물·환경",name:"네스",axis:"생태계와 자연의 내재적 가치를 인정하는 심층생태주의.",why:"인간을 자연의 중심으로 두는 얕은 환경주의를 넘어 자연 자체의 가치와 생태적 관계를 중시한다.",concepts:["심층생태주의","생명권","생태적 자아","생태적 평등","자연의 내재적 가치"],phrases:["인간중심주의 비판","생태적 자아","모든 생명체의 평등한 가치","자연과 인간의 상호연결","생활양식의 근본적 전환"],distinction:"레오폴드보다 생태적 자아·생태적 평등과 인간중심주의 비판이 두드러짐."},
+{id:16,cat:"동물·환경",name:"요나스",axis:"미래의 생명과 인간에 대한 책임.",why:"현대 기술은 과거보다 훨씬 큰 규모로 미래를 바꿀 수 있으므로 지금의 행위가 미래 세대의 생존을 위협하지 않도록 책임져야 한다.",concepts:["책임 윤리","미래 세대","기술의 힘","공포의 발견술","존재의 명령"],phrases:["미래 세대의 생존","행위의 장기적 결과","돌이킬 수 없는 파국","책임의 범위 확대","공포를 통한 예견"],distinction:"현재의 권리보다 미래 세대와 생명의 지속 가능성을 강하게 강조."},
+{id:17,cat:"현대 사회 사상가",name:"마르크스",axis:"소외를 낳는 자본주의적 생산관계와 계급 구조의 극복.",why:"노동자가 자신의 노동과 생산물로부터 소외되고 계급 간 구조적 갈등이 발생하는 원인을 생산수단의 사적 소유와 자본주의적 관계에서 찾는다.",concepts:["소외","계급","생산수단","사적 소유","자본주의","프롤레타리아"],phrases:["노동으로부터 소외","생산물로부터 소외","생산수단의 사적 소유","계급 대립","자본과 노동","사회 구조의 변혁"],distinction:"개인의 도덕성만 고치는 것이 아니라 경제·사회 구조의 변혁을 중시."},
+{id:18,cat:"현대 사회 사상가",name:"소로",axis:"개인의 양심과 정의에 따른 부정의한 국가에 대한 비협조.",why:"국가의 법 자체가 도덕적으로 정당하지 않을 때 시민은 양심에 따라 부정의에 협력하지 않을 수 있다.",concepts:["시민 불복종","양심","비폭력","부정의한 법","개인의 도덕적 책임"],phrases:["양심에 따름","부정의한 정부에 협력하지 않음","법보다 정의가 우선","비폭력적 저항","시민의 도덕적 책임"],distinction:"롤스는 공공적·정치적 시민 불복종의 조건을 체계화, 소로는 개인의 양심과 비협조를 강조."},
+{id:19,cat:"현대 사회 사상가",name:"하이데거",axis:"죽음의 자각을 통한 본래적 실존.",why:"죽음은 누구도 대신할 수 없는 자신의 가능성이므로 이를 직시하면 '남들이 사는 방식'에 휩쓸리는 비본래적 삶에서 벗어날 수 있다.",concepts:["죽음에의 선구","본래성","비본래성","세인","실존"],phrases:["죽음을 향한 존재","죽음에 대한 선구","세인에 휩쓸림","본래적으로 존재","자기 자신의 가능성","유한성"],distinction:"죽음 자체를 두려워하지 말라는 에피쿠로스와 달리 죽음의 자각을 실존의 계기로 본다."},
+{id:20,cat:"현대 사회 사상가",name:"아도르노",axis:"사회 구조와 대중문화가 인간의 비판적 사고와 자율성을 약화시키는 문제에 대한 비판.",why:"대중문화가 단순한 오락을 넘어 사람들의 욕구와 의식을 획일화할 수 있다고 보아 비판적 이성을 강조한다.",concepts:["문화산업","획일화","대중문화","비판적 이성","도구적 이성"],phrases:["문화상품의 대량생산","욕구의 획일화","수동적 소비","비판적 사고의 약화","자율성의 침해"],distinction:"단순히 '대중문화가 나쁘다'가 아니라 문화산업의 사회적 기능과 인간 자율성 약화를 비판."},
+{id:21,cat:"현대 사회 사상가",name:"베버",axis:"현대 사회의 합리화와 관료제화가 인간의 삶을 어떻게 규율하는가.",why:"근대 사회가 계산 가능성과 효율성을 중심으로 합리화되면서 개인이 거대한 규칙과 조직 속에 갇힐 수 있다.",concepts:["합리화","관료제","가치중립","직업윤리","책임윤리","신념윤리"],phrases:["계산 가능성","규칙과 절차","관료제적 지배","가치와 사실의 구분","책임윤리","신념윤리"],distinction:"결과를 고려하는 책임윤리와 신념에 충실한 신념윤리의 대비를 구별."},
+{id:22,cat:"동양 사상",name:"공자",axis:"인(仁)의 실천과 예(禮)를 통한 관계의 질서.",why:"인간다움은 혼자 마음속으로만 갖는 것이 아니라 가족·사회 관계 속에서 예로 실천될 때 드러난다.",concepts:["인","예","군자","정명","수기치인","덕치","극기복례"],phrases:["자기를 이기고 예로 돌아감","자신을 닦고 남을 다스림","이름에 걸맞은 역할","덕으로 백성을 인도","군자는 인을 실천"],distinction:"맹자=선한 본성의 확충 / 공자=인과 예의 실천."},
+{id:23,cat:"동양 사상",name:"맹자",axis:"선한 본성의 확충.",why:"측은·수오·사양·시비의 마음이 인간에게 본래 존재한다고 보므로 이를 키우는 수양과 왕도정치가 연결된다.",concepts:["성선설","사단","측은지심","왕도","민본","호연지기"],phrases:["측은히 여기는 마음","차마 하지 못하는 마음","사양하는 마음","옳고 그름을 가리는 마음","백성을 보호하는 정치"],distinction:"순자=성악설·교화."},
+{id:24,cat:"동양 사상",name:"순자",axis:"본성의 욕망을 예와 교육으로 교화.",why:"욕망을 그대로 두면 경쟁과 혼란이 생기므로 후천적 규범과 학습이 필요하다.",concepts:["성악설","예","화성기위","인위","교육","교화"],phrases:["본성을 변화시킴","인위적 노력","예를 세움","욕망의 조절","후천적 학습"],distinction:"맹자와 정반대의 인간 본성론."},
+{id:25,cat:"동양 사상",name:"노자",axis:"자연스러움과 무위.",why:"인위적으로 욕망·규범·정치를 과도하게 만들수록 자연스러운 질서가 깨진다.",concepts:["도","무위","무위자연","소국과민","인위 비판"],phrases:["억지로 하지 않음","자연에 맡김","통치자의 개입 최소화","작고 소박한 공동체","욕망을 줄임"],distinction:"장자=분별과 관점에서 벗어난 자유가 더 중심."},
+{id:26,cat:"동양 사상",name:"장자",axis:"분별을 초월한 자유와 자연스러움.",why:"인간이 만든 시비·우열의 기준을 절대화하면 본래의 자유를 잃는다.",concepts:["제물론","소요유","물아일체","만물제동","상대적 관점"],phrases:["시비의 분별을 초월","사물의 관점","소요하는 자유","만물의 동등성","자아와 만물의 구분을 넘어섬"],distinction:"노자와 자연주의를 공유하지만 장자는 인식의 상대성과 정신적 자유가 강함."},
+{id:27,cat:"동양 사상",name:"불교",axis:"집착의 소멸과 해탈.",why:"무상·무아인 것을 영원한 자아와 소유물로 붙잡는 집착이 고통을 만들기 때문에 집착을 끊는 것이 해탈로 이어진다.",concepts:["연기","무상","무아","사성제","팔정도","해탈","자비","업","윤회"],phrases:["조건에 의존해 발생","고정된 자아가 없음","모든 것은 변함","갈애·집착","고의 원인과 소멸","팔정도의 실천"],distinction:"'아무것도 존재하지 않는다'가 아니라 고정된 실체로 집착할 자아가 없다는 점."}
+];
+const RULES = [
+["무지의 베일·원초적 입장·최소수혜자","롤스"],["정당한 취득·정당한 이전·자기소유권·최소국가","노직"],
+["정언명령·준칙·보편적 입법·인간을 목적으로·의무에서 비롯된 행위","칸트"],["최대 다수·쾌락 계산·총량","벤담"],
+["고급 쾌락·해악 원칙·개성·자유","밀"],["이익의 동등한 고려·종차별주의·고통","싱어"],
+["삶의 주체·고유한 가치·권리","레건"],["목적론적 삶의 중심·모든 생명체","테일러"],
+["생명 공동체·온전성·안정성·아름다움","레오폴드"],["미래 세대·책임·기술의 장기적 영향·공포의 발견술","요나스"],
+["소외·생산수단·계급·자본","마르크스"],["양심·부정의한 법에 협력 거부","소로"],
+["죽음에의 선구·세인·본래성","하이데거"],["문화산업·획일화·대중문화","아도르노"],
+["합리화·관료제·신념윤리/책임윤리","베버"],["인·예·정명","공자"],["사단·성선설·왕도","맹자"],
+["성악설·화성기위","순자"],["무위·자연·소국과민","노자"],["제물론·소요유","장자"]
+];
+const INTERVAL=[0,1,3,7,14,30];
+const KEY='saengyun_link_srs_v3';
+const now=()=>new Date();
+function dayIndex(d){return Math.floor(d.getTime()/86400000)}
+function session(){const d=now();return dayIndex(d)*2+(d.getHours()>=15?1:0)}
+function load(){let x={};try{x=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){} DATA.forEach(d=>{if(!x[d.id])x[d.id]={box:1,due:session(),seen:0,correct:0,wrong:0}});return x}
+let state=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderStats()}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pick(a,n){return shuffle(a).slice(0,n)}
+function due(){return DATA.filter(d=>state[d.id].due<=session())}
+function pct(){return Math.round(DATA.filter(d=>state[d.id].box>=4).length/DATA.length*100)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function renderStats(){const d=due().length;const p=pct();document.getElementById('stats').innerHTML=`<div class="stat">오늘 복습 <b>${d}</b></div><div class="stat">숙달 <b>${DATA.filter(x=>state[x.id].box>=4).length}/${DATA.length}</b></div><div class="stat">정답률 <b>${accuracy()}%</b></div>`;document.getElementById('progress').style.setProperty('--pct',p+'%');document.getElementById('progress').querySelector('span').textContent=p+'%';}
+function accuracy(){let a=DATA.reduce((n,d)=>n+state[d.id].correct,0),w=DATA.reduce((n,d)=>n+state[d.id].wrong,0);return a+w?Math.round(a/(a+w)*100):0}
+function schedule(id,quality){let s=state[id];s.seen++;if(quality==='good')s.box=Math.min(5,s.box+1);else if(quality==='fuzzy')s.box=Math.max(1,s.box);else s.box=1;s.due=session()+INTERVAL[s.box];save()}
+function dueItem(){let ds=due();if(ds.length)return pick(ds,1)[0];return pick(DATA.filter(d=>state[d.id].box<5),1)[0]||pick(DATA,1)[0]}
+
+// TODAY: first learn gently, then recall and grade. No forced giant memorization dump.
+let today={item:null,revealed:false,phase:'learn'};
+function nextToday(){today.item=dueItem();today.revealed=false;today.phase='learn';renderToday()}
+function renderToday(){const el=document.getElementById('today');if(!today.item){nextToday();return}const x=today.item;const st=state[x.id];el.innerHTML=`
+<div class="card"><div class="tag">${x.cat} · BOX ${st.box}</div><div class="name">${x.name}</div><div class="axis">⭐ ${x.axis}</div>
+<div class="recall" id="whyPrompt"><b>잠깐만. 왜 이런 생각을 했을까?</b><span>답을 보기 전에 5초만 머릿속으로 연결해봐.</span></div>
+<div id="learnMore" style="display:none"><div class="why"><b>왜?</b><br>${x.why}</div><div class="label">핵심 개념</div><div class="chips">${x.concepts.map(c=>`<span class="chip">${c}</span>`).join('')}</div><div class="label">지문에서 이렇게 바뀌어 나올 수 있음</div><div class="chips">${x.phrases.map(c=>`<span class="chip">${c}</span>`).join('')}</div><div class="label">구별</div><div class="why">${x.distinction}</div><div class="label">이제 이름을 가리고 맞혀보기</div><div class="choice-list" id="recallChoice"></div></div></div>`;
+ document.getElementById('whyPrompt').onclick=()=>{document.getElementById('whyPrompt').style.display='none';document.getElementById('learnMore').style.display='block';buildRecall(x)}}
+function buildRecall(x){const opts=shuffle([x,...pick(DATA.filter(d=>d.id!==x.id),3)]);document.getElementById('recallChoice').innerHTML=opts.map(o=>`<button class="choice" data-id="${o.id}">${o.name}</button>`).join('');document.querySelectorAll('#recallChoice .choice').forEach(b=>b.onclick=()=>gradeRecall(b,x))}
+function gradeRecall(btn,x){document.querySelectorAll('#recallChoice .choice').forEach(b=>b.disabled=true);const ok=+btn.dataset.id===x.id;btn.classList.add(ok?'correct':'wrong');if(!ok)document.querySelector(`#recallChoice [data-id="${x.id}"]`).classList.add('correct');state[x.id][ok?'correct':'wrong']++;schedule(x.id,ok?'good':'bad');document.getElementById('learnMore').insertAdjacentHTML('beforeend',`<div class="result">${ok?'✅ 맞았어.':'❌ 다시 만나자.'} <strong>${x.name}</strong> · 다음 복습: ${state[x.id].due<=session()?'이번 세션 중 다시':'나중에 자동 복습'}</div><div class="actions"><button class="btn primary" id="nextToday">다음 카드 →</button><button class="btn" id="goConnect">연결 훈련</button></div>`);document.getElementById('nextToday').onclick=nextToday;document.getElementById('goConnect').onclick=()=>switchTab('connect')}
+
+// CONNECT: choose the concepts/phrases that actually grow out of the axis.
+let conn={item:null,selected:new Set(),answered:false};
+function nextConnect(){conn.item=dueItem();conn.selected=new Set();conn.answered=false;renderConnect()}
+function renderConnect(){const el=document.getElementById('connect');const x=conn.item||dueItem();conn.item=x;const good=shuffle([...x.concepts,...x.phrases]).slice(0,3);const distract=pick(DATA.filter(d=>d.id!==x.id).flatMap(d=>d.concepts),3);const opts=shuffle([...good,...distract]);el.innerHTML=`<div class="card"><div class="tag">핵심축 연결 훈련</div><div class="name">${x.name}</div><div class="axis">⭐ ${x.axis}</div><div class="why">${x.why}</div><div class="label">이 핵심축에서 자연스럽게 나오는 표현 3개를 골라줘.</div><div class="match-grid" id="connGrid">${opts.map((o,i)=>`<button class="match-item" data-v="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div><button class="btn primary" id="connCheck" style="width:100%;margin-top:10px">연결 확인</button><div id="connResult"></div></div>`;document.querySelectorAll('#connGrid .match-item').forEach(b=>b.onclick=()=>{if(conn.answered)return;b.classList.toggle('sel');const v=b.dataset.v;if(conn.selected.has(v))conn.selected.delete(v);else if(conn.selected.size<3)conn.selected.add(v)});document.getElementById('connCheck').onclick=()=>checkConnect(good)}
+function checkConnect(good){if(conn.answered)return;conn.answered=true;const set=new Set(good);document.querySelectorAll('#connGrid .match-item').forEach(b=>{const yes=set.has(b.dataset.v);if(yes)b.classList.add('good');else if(conn.selected.has(b.dataset.v))b.classList.add('bad');b.disabled=true});const score=[...conn.selected].filter(v=>set.has(v)).length;document.getElementById('connResult').innerHTML=`<div class="result">${score===3?'🔥 완벽.':score===2?'👍 거의 연결됐어.':'💡 핵심축에서 다시 한 번 뻗어가 보자.'}<br>핵심축 → <strong>${x.concepts.slice(0,3).join(' → ')}</strong><br><span class="small">${x.why}</span></div><button class="btn primary" id="connNext" style="width:100%;margin-top:9px">다음 연결 →</button>`;document.getElementById('connNext').onclick=nextConnect}
+
+// EXAM: no name in prompt; answer must be inferred from the text.
+let exam={item:null,answered:false,mode:'mcq'};
+function nextExam(){exam.item=pick(DATA,1)[0];exam.answered=false;renderExam()}
+function renderExam(){const el=document.getElementById('exam');const x=exam.item||pick(DATA,1)[0];exam.item=x;const distract=pick(DATA.filter(d=>d.id!==x.id),3);const options=shuffle([x,...distract]);const phrase=pick(x.phrases,1)[0];el.innerHTML=`<div class="card"><div class="tag">실전 · 사상가 역추적</div><div class="exam-q" style="font-size:16px;line-height:1.75">“${phrase}”<br><br>${x.why}</div><div class="label">위 입장에 가장 가까운 사상가는?</div><div class="choice-list" id="examChoices">${options.map(o=>`<button class="choice" data-id="${o.id}">${o.name}</button>`).join('')}</div><div id="examResult"></div></div>`;document.querySelectorAll('#examChoices .choice').forEach(b=>b.onclick=()=>answerExam(b,x))}
+function answerExam(btn,x){if(exam.answered)return;exam.answered=true;const ok=+btn.dataset.id===x.id;document.querySelectorAll('#examChoices .choice').forEach(b=>{b.disabled=true;if(+b.dataset.id===x.id)b.classList.add('correct');else if(b===btn)b.classList.add('wrong')});document.getElementById('examResult').innerHTML=`<div class="result">${ok?'✅ 정답':'❌ 오답'}<br><strong>${x.name} · ${x.axis}</strong><br>${x.why}<br><span class="small">지문형 표현: ${x.phrases.join(' / ')}</span></div><button class="btn primary" id="examNext" style="width:100%;margin-top:9px">다음 문제 →</button>`;document.getElementById('examNext').onclick=nextExam}
+
+// CARDS: free browsing, but with deliberate recall first.
+let cardIdx=0,cardReveal=false;
+function renderCards(){const x=DATA[cardIdx%DATA.length];const el=document.getElementById('cards');el.innerHTML=`<div class="card"><div class="tag">${x.cat}</div><div class="name">${x.name}</div><div class="axis">⭐ ${x.axis}</div>${cardReveal?`<div class="why"><b>왜?</b><br>${x.why}</div><div class="label">핵심 개념</div><div class="chips">${x.concepts.map(c=>`<span class="chip">${c}</span>`).join('')}</div><div class="label">지문형 표현</div><div class="chips">${x.phrases.map(c=>`<span class="chip">${c}</span>`).join('')}</div><div class="label">구별</div><div class="why">${x.distinction}</div>`:`<div class="recall" id="cardReveal"><b>이제 아래 내용을 떠올려봐</b><span>왜? · 핵심 개념 3개 · 지문 표현 2개 · 구별점 1개</span></div>`}</div><div class="actions"><button class="btn" id="prevCard">← 이전</button><button class="btn" id="nextCard">다음 →</button></div>`;if(!cardReveal)document.getElementById('cardReveal').onclick=()=>{cardReveal=true;renderCards()};document.getElementById('prevCard').onclick=()=>{cardIdx=(cardIdx-1+DATA.length)%DATA.length;cardReveal=false;renderCards()};document.getElementById('nextCard').onclick=()=>{cardIdx=(cardIdx+1)%DATA.length;cardReveal=false;renderCards()}}
+
+function switchTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='connect')nextConnect();if(id==='exam')nextExam();if(id==='cards')renderCards()}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
+renderStats();nextToday();nextConnect();nextExam();renderCards();
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script></body></html>
