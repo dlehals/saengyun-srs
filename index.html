@@ -168,7 +168,7 @@ function speak(text){
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR';
-  u.rate = 0.95;
+  u.rate = 0.70;
   window.speechSynthesis.speak(u);
 }
 function makeSpeakBtn(text, label){
