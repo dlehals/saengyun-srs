@@ -230,7 +230,7 @@ function dueIds(){
 }
 
 function renderStatsBar(){
-  const t = todayStr();
+  const t = currentSessionIndex();
   const due = dueIds().length;
   const learned = DATA.filter(d=>srsState[d.id].box>=4).length;
   document.getElementById('stats-bar').innerHTML =
